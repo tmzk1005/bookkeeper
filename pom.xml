@@ -71,6 +71,8 @@
     <module>tests</module>
     <module>native-io</module>
     <module>testtools</module>
+
+    <module>zk-study</module>
   </modules>
   <mailingLists>
     <mailingList>
