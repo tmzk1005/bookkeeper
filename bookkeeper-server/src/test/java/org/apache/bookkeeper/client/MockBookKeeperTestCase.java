@@ -304,9 +304,14 @@ public abstract class MockBookKeeperTestCase {
 
     protected void resumeBookieWriteAcks(BookieId address) {
         suspendedBookiesForForceLedgerAcks.remove(address);
+        System.out.println(Thread.currentThread().getName() + "  going to remove pendingResponses" + address.getId());
         List<Runnable> pendingResponses = deferredBookieForceLedgerResponses.remove(address);
+        System.out.println(Thread.currentThread().getName() + "  removed pendingResponses" + address.getId());
         if (pendingResponses != null) {
+            System.out.println(Thread.currentThread().getName() + "  pendingResponses NOT null" + address.getId());
             pendingResponses.forEach(Runnable::run);
+        } else {
+            System.out.println(Thread.currentThread().getName() + " pendingResponses  IS null " + address.getId());
         }
     }
 
@@ -656,11 +661,14 @@ public abstract class MockBookKeeperTestCase {
                     callback.forceLedgerComplete(BKException.Code.OK, ledgerId, bookieSocketAddress, ctx);
                 });
             };
+            System.out.println(Thread.currentThread().getName() + " See if contains " + bookieSocketAddress.getId());
             if (suspendedBookiesForForceLedgerAcks.contains(bookieSocketAddress)) {
                 List<Runnable> queue = deferredBookieForceLedgerResponses.computeIfAbsent(bookieSocketAddress,
                         (k) -> new CopyOnWriteArrayList<>());
                 queue.add(activity);
+                System.out.println(Thread.currentThread().getName() + "      contains: " + bookieSocketAddress.getId());
             } else {
+                System.out.println(Thread.currentThread().getName() + "  NOT contains: " + bookieSocketAddress.getId());
                 activity.run();
             }
             return null;

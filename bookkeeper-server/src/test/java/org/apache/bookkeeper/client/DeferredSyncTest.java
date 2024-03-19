@@ -164,6 +164,7 @@ public class DeferredSyncTest extends MockBookKeeperTestCase {
             // one bookie will stop sending acks for forceLedger
             BookieId bookieAddress = wh.getLedgerMetadata().getEnsembleAt(wh.getLastAddPushed()).get(0);
             suspendBookieForceLedgerAcks(bookieAddress);
+            System.out.println(Thread.currentThread().getName() + " suspend " + bookieAddress.getId());
 
             // start and complete a force, lastAddConfirmed cannot be "lastAddPushedAfterSuspendedWrite"
             // because the write has not yet been acknowledged by AckQuorumSize Bookies
@@ -175,6 +176,8 @@ public class DeferredSyncTest extends MockBookKeeperTestCase {
 
             // receive the ack for forceLedger
             resumeBookieWriteAcks(bookieAddress);
+            System.out.println(Thread.currentThread().getName() + " resume " + bookieAddress.getId());
+            System.out.println(Thread.currentThread().getName() + " wait result");
             result(forceResult);
 
             // now LastAddConfirmed will be equals to the last confirmed entry
